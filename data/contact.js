@@ -3,12 +3,9 @@ const fs = require('fs');
 const { resolve } = require('path');
 const readline = require('readline');
 
-const rl = readline.createInterface({
-    input :process.stdin,
-    output:process.stdout
-});
 
 //Mengecek folder dan file
+
 const dirPath = './data';
 if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath);
@@ -18,6 +15,7 @@ const dataPath = './data/contacts.json';
 if (!fs.existsSync(dataPath)) {
     fs.writeFileSync(dataPath,'[]','utf-8');
 }
+
 
 //Pertanyaan
 const questions = (ask) =>{
@@ -30,13 +28,23 @@ const questions = (ask) =>{
 
 //Menyimpan inputan
 const SaveContact = (name,email,phone)=>{
-    const contact   = {name,phone,email};
+    const contact   = {name,email,phone};
     const file      = fs.readFileSync('data/contacts.json','utf-8');
     const contacts  = JSON.parse(file);
     contacts.push(contact);
-    fs.writeFileSync('data/contacts.json',JSON.stringify(contacts));
-    console.log('Terima Kasih sudah memasukkan data');
-    rl.close();
+
+    //Mengecek data duplicate
+    let duplicate = 0
+    for (let i = 0; i < contacts.length ;i++){
+        let dataJson  = contacts[i]   
+        if (contact.name == dataJson.name ) { duplicate ++}     
+    }
+    if (duplicate > 1) {
+        console.log("Data nama sudah ada");
+    }else{       
+        fs.writeFileSync('data/contacts.json',JSON.stringify(contacts));
+        console.log('Terima Kasih sudah memasukkan data');
+    }
 }
 
 
