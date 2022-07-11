@@ -1,6 +1,7 @@
 const contacts = require('./data/contact.js');
 const yargs = require("yargs");
 
+
 yargs.command({
     command :'add',
     describe:'add new contact',
