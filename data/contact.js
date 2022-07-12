@@ -17,19 +17,27 @@ if (!fs.existsSync(dataPath)) {
     fs.writeFileSync(dataPath,'[]','utf-8');
 }
 
-//Menyimpan inputan
-const SaveContact = (name,email,phone)=>{
-    const contact   = {name,email,phone};
+const loadContact = () => {
     const file      = fs.readFileSync('data/contacts.json','utf-8');
     const contacts  = JSON.parse(file);
+    return contacts ;
+}
+
+
+//Menyimpan inputan
+const SaveContact = (name,email,phone)=>{
+    const contact  = {name,email,phone};
+    const contacts = loadContact()
     contacts.push(contact);
 
-    //validasi email
-    cekEmail(email)
-  
-    //validasi Nomer hp
-    cekNomer(phone)
-
+    //validasi email dan no hp
+    if (email) {
+        cekEmail(email)
+    }
+    if (phone) {
+        cekNomer(phone)
+    }
+   
     //Mengecek data duplicate 
     let duplicate = 0
     for (let i = 0; i < contacts.length ;i++){
@@ -43,7 +51,8 @@ const SaveContact = (name,email,phone)=>{
         fs.writeFileSync('data/contacts.json',JSON.stringify(contacts));
         console.log('Terima Kasih sudah memasukkan data');
     }
-
+ 
+ 
     //Cara Lain
     // const duplikat = contacts.find((contact)=>contact.name === name)
     // if(duplikat){
@@ -52,12 +61,48 @@ const SaveContact = (name,email,phone)=>{
     // }
 }
 
+//fungsi melihat daftar contact
+const listContact = () => {
+    const contacts = loadContact()
+    console.log('Contact List:')
+    contacts.forEach((contact,i) => {
+        console.log(`${i+1}.${contact.name} - ${contact.phone}`);
+    });
+}
+
+//fungsi melihat detail contact
+const detailContact = (name) => {
+    const contacts = loadContact()
+    console.log('Contact detail:')
+    contacts.forEach((contact,i) => {
+        if (name == contact.name) {
+            console.log(`Name  : ${contact.name}`);          
+            console.log(`Number: ${contact.phone}`);          
+            console.log(`Email : ${contact.email}`);          
+        }
+    });
+}
+
+//Fungsi menghapus contact
+const deleteContact = (name) => {
+    const contacts = loadContact()
+    contacts.forEach((contact,i) => {
+        if (contact.name == name ) {
+            contacts.splice(i,1)
+        }
+    });
+    fs.writeFileSync('data/contacts.json',JSON.stringify(contacts));
+    console.log("Data contact berhasil di hapus");
+}
+
+
+
 //fungsi validasi Email
 function cekEmail(email) {
     if (validator.isEmail(email)) {
         return false
     }else{
-        console.log('Email masih salah')
+        console.log('Email belum valid')
         exit()
     }
 }
@@ -67,10 +112,10 @@ function cekNomer(phone) {
     if (validator.isMobilePhone(phone,'id-ID')) {
         return false          
     }else{
-        console.log('Nomer masih salah')
+        console.log('Nomer belum valid')
         exit()
     }
 }
 
 
-module.exports={SaveContact}
+module.exports={SaveContact,listContact,detailContact,deleteContact}
