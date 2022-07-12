@@ -54,7 +54,7 @@ yargs.command({
     },
 
 })
-//show detail contact 
+//delete contact 
 yargs.command({
     command :'delete',
     describe:'delete contact base on name',
